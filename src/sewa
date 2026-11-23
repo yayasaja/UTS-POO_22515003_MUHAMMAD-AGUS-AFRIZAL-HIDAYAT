@@ -1,0 +1,79 @@
+package rental.model;
+/**
+ * Class untuk mengelola transaksi penyewaan kendaraan.
+ */
+public class Sewa {
+    private String kodeSewa;
+    private Kendaraan kendaraan;
+    private Penyewa penyewa;
+    private int lamaHari;
+    private double totalBiaya;
+    private boolean aktif;
+    public Sewa() {
+        this.kodeSewa = "";
+        this.lamaHari = 0;
+        this.totalBiaya = 0;
+        this.aktif = false;
+    }
+    public Sewa(String kodeSewa, Kendaraan kendaraan,
+                Penyewa penyewa, int lamaHari) {
+        this.kodeSewa = kodeSewa;
+        this.kendaraan = kendaraan;
+        this.penyewa = penyewa;
+        this.lamaHari = lamaHari;
+        this.totalBiaya = 0;
+        this.aktif = false;
+    }
+    public String getKodeSewa() {
+        return kodeSewa;
+    }
+    public Kendaraan getKendaraan() {
+        return kendaraan;
+    }
+    public Penyewa getPenyewa() {
+        return penyewa;
+    }
+    public int getLamaHari() {
+        return lamaHari;
+    }
+    public double getTotalBiaya() {
+        return totalBiaya;
+    }
+    public boolean isAktif() {
+        return aktif;
+    }
+    public void setLamaHari(int lamaHari) {
+        if (lamaHari > 0) {
+            this.lamaHari = lamaHari;
+        }
+    }
+    public double hitungTotalBiaya() {
+        if (kendaraan == null || lamaHari <= 0) {
+            return 0;
+        }
+
+        totalBiaya = kendaraan.hitungBiaya(lamaHari);
+        return totalBiaya;
+    }
+    public void mulaiSewa() {
+        if (kendaraan != null && kendaraan.isTersedia()) {
+            kendaraan.tandaiDisewa();
+            aktif = true;
+        }
+    }
+    public void batalkanSewa() {
+        if (aktif && kendaraan != null) {
+            kendaraan.tandaiTersedia();
+            aktif = false;
+        }
+    }
+    public void tampilkanInfo() {
+        System.out.println("Kode Sewa    : " + kodeSewa);
+        System.out.println("Penyewa      : " + penyewa.getNama());
+        System.out.println("Kendaraan    : " + kendaraan.getMerk());
+        System.out.println("Lama Sewa    : " + lamaHari + " hari");
+        System.out.println("Total Biaya  : Rp" + totalBiaya);
+        System.out.println("Status       : " +
+                (aktif ? "Aktif" : "Tidak Aktif"));
+    }
+}
