@@ -1,1 +1,78 @@
+package rental.model;
+/**
+ * Class untuk menyimpan dan mengelola data kendaraan.
+ */
+public class Kendaraan {
+    private String kode;
+    private String merk;
+    private String jenis;
+    private double tarifPerHari;
+    private boolean tersedia;
+    public Kendaraan() {
+        this.kode = "";
+        this.merk = "";
+        this.jenis = "";
+        this.tarifPerHari = 0;
+        this.tersedia = true;
+    }
+    public Kendaraan(String kode, String merk, String jenis, double tarifPerHari) {
+        this.kode = kode;
+        this.merk = merk;
+        this.jenis = jenis;
+        setTarifPerHari(tarifPerHari);
+        this.tersedia = true;
+    }
+    public String getKode() {
+        return kode;
+    }
+
+    public String getMerk() {
+        return merk;
+    }
+    public void setMerk(String merk) {
+        if (merk != null && !merk.trim().isEmpty()) {
+            this.merk = merk;
+        }
+    }
+    public String getJenis() {
+        return jenis;
+    }
+    public void setJenis(String jenis) {
+        if (jenis != null && !jenis.trim().isEmpty()) {
+            this.jenis = jenis;
+        }
+    }
+    public double getTarifPerHari() {
+        return tarifPerHari;
+    }
+
+    public void setTarifPerHari(double tarifPerHari) {
+        if (tarifPerHari > 0) {
+            this.tarifPerHari = tarifPerHari;
+        }
+    }
+    public boolean isTersedia() {
+        return tersedia;
+    }
+    public void tandaiDisewa() {
+        this.tersedia = false;
+    }
+    public void tandaiTersedia() {
+        this.tersedia = true;
+    }
+    public double hitungBiaya(int lamaHari) {
+        if (lamaHari <= 0) {
+            return 0;
+        }
+        return tarifPerHari * lamaHari;
+    }
+    public void tampilkanInfo() {
+        System.out.println("Kode          : " + kode);
+        System.out.println("Merk          : " + merk);
+        System.out.println("Jenis         : " + jenis);
+        System.out.println("Tarif/Hari    : Rp" + tarifPerHari);
+        System.out.println("Status        : " +
+                (tersedia ? "Tersedia" : "Sedang Disewa"));
+    }
+}
 
