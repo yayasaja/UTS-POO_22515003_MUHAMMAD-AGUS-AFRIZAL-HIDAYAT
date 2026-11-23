@@ -1,0 +1,62 @@
+package rental.adt;
+import rental.model.Sewa;
+/**
+ * Implementasi ADT Stack untuk menyimpan riwayat transaksi.
+ * Menggunakan prinsip LIFO (Last In, First Out).
+ */
+public class StackADT {
+    private Sewa[] data;
+    private int top;
+    private final int KAPASITAS = 100;
+    public StackADT() {
+        data = new Sewa[KAPASITAS];
+        top = -1;
+    }
+    public boolean push(Sewa sewa) {
+        if (isFull()) {
+            System.out.println("Stack penuh!");
+            return false;
+        }
+        data[++top] = sewa;
+        return true;
+    }
+    public Sewa pop() {
+        if (isEmpty()) {
+            System.out.println("Stack kosong!");
+            return null;
+        }
+        Sewa hasil = data[top];
+        data[top] = null;
+        top--;
+        return hasil;
+    }
+    public Sewa peek() {
+        if (isEmpty()) {
+            return null;
+        }
+        return data[top];
+    }
+    public boolean isEmpty() {
+        return top == -1;
+    }
+    public boolean isFull() {
+        return top == KAPASITAS - 1;
+    }
+    public int size() {
+        return top + 1;
+    }
+    public void tampilkan() {
+        if (isEmpty()) {
+            System.out.println("Belum ada riwayat transaksi.");
+            return;
+        }
+        System.out.println("\n=== RIWAYAT TRANSAKSI (STACK) ===");
+        for (int i = top; i >= 0; i--) {
+            System.out.println("Kode Sewa: "
+                    + data[i].getKodeSewa());
+            System.out.println("Penyewa: "
+                    + data[i].getPenyewa().getNama());
+            System.out.println("----------------------------");
+        }
+    }
+}
