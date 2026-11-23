@@ -1,0 +1,173 @@
+package rental;
+import rental.model.*;
+import java.util.Scanner;
+/**
+ * Class Main untuk menjalankan aplikasi Rental Kendaraan.
+ */
+public class Main {
+    private static Scanner input = new Scanner(System.in);
+    private static Rental rental = new Rental(
+            "Rental motor yaya", "Kendari"
+    );
+    public static void main(String[] args) {
+        int pilihan;
+        do {
+            tampilkanMenu();
+            pilihan = bacaInt("Pilih menu: ");
+            switch (pilihan) {
+                case 1:
+                    tambahKendaraan();
+                    break;
+                case 2:
+                    rental.tampilkanKendaraan();
+                    break;
+                case 3:
+                    tambahPenyewa();
+                    break;
+                case 4:
+                    rental.tampilkanPenyewa();
+                    break;
+                case 5:
+                    transaksiSewa();
+                    break;
+                case 6:
+                    cariKendaraan();
+                    break;
+                case 7:
+                    rental.tampilkanRiwayat();
+                    break;
+                case 8:
+                    rental.batalkanTransaksiTerakhir();
+                    break;
+                case 9:
+                    rental.tampilkanLaporan();
+                    break;
+                case 0:
+                    System.out.println("Terima kasih telah menggunakan aplikasi!");
+                    break;
+                default:
+                    System.out.println("Pilihan tidak tersedia!");
+            }
+        } while (pilihan != 0);
+        input.close();
+    }
+    public static void tampilkanMenu() {
+        System.out.println("\n================================");
+        System.out.println("    SISTEM RENTAL KENDARAAN");
+        System.out.println("================================");
+        System.out.println("1. Tambah Kendaraan");
+        System.out.println("2. Tampilkan Kendaraan");
+        System.out.println("3. Tambah Penyewa");
+        System.out.println("4. Tampilkan Penyewa");
+        System.out.println("5. Transaksi Penyewaan");
+        System.out.println("6. Cari Kendaraan");
+        System.out.println("7. Riwayat Transaksi (Stack)");
+        System.out.println("8. Batalkan Transaksi Terakhir");
+        System.out.println("9. Laporan Rental");
+        System.out.println("0. Keluar");
+        System.out.println("================================");
+    }
+    private static int bacaInt(String pesan) {
+        while (true) {
+            try {
+                System.out.print(pesan);
+                return Integer.parseInt(input.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Masukkan angka yang benar!");
+            }
+        }
+    }
+    private static double bacaDouble(String pesan) {
+        while (true) {
+            try {
+                System.out.print(pesan);
+                return Double.parseDouble(
+                        input.nextLine().trim()
+                );
+            } catch (NumberFormatException e) {
+                System.out.println("Masukkan angka yang benar!");
+            }
+        }
+    }
+    private static String bacaTeks(String pesan) {
+        while (true) {
+            System.out.print(pesan);
+            String teks = input.nextLine().trim();
+
+            if (!teks.isEmpty()) {
+                return teks;
+            }
+
+            System.out.println("Data tidak boleh kosong!");
+        }
+    }
+    private static void tambahKendaraan() {
+        System.out.println("\n=== TAMBAH KENDARAAN ===");
+        String kode = bacaTeks("Kode kendaraan: ");
+        String merk = bacaTeks("Merk kendaraan: ");
+        String jenis = bacaTeks("Jenis kendaraan: ");
+        double tarif;
+        do {
+            tarif = bacaDouble("Tarif per hari: Rp");
+            if (tarif <= 0) {
+                System.out.println("Tarif harus lebih dari 0!");
+            }
+        } while (tarif <= 0);
+
+        Kendaraan kendaraan = new Kendaraan(
+                kode, merk, jenis, tarif
+        );
+
+        if (rental.tambahKendaraan(kendaraan)) {
+            System.out.println("Kendaraan berhasil ditambahkan!");
+        } else {
+            System.out.println("Gagal menambahkan kendaraan!");
+        }
+    }
+    private static void tambahPenyewa() {
+        System.out.println("\n=== TAMBAH PENYEWA ===");
+        String id = bacaTeks("ID penyewa: ");
+        String nama = bacaTeks("Nama penyewa: ");
+        String telepon = bacaTeks("Nomor telepon: ");
+        String alamat = bacaTeks("Alamat: ");
+        Penyewa penyewa = new Penyewa(
+                id, nama, telepon, alamat
+        );
+        if (rental.tambahPenyewa(penyewa)) {
+            System.out.println("Penyewa berhasil ditambahkan!");
+        } else {
+            System.out.println("Gagal menambahkan penyewa!");
+        }
+    }
+    private static void transaksiSewa() {
+        System.out.println("\n=== TRANSAKSI PENYEWAAN ===");
+        rental.tampilkanKendaraan();
+        String kodeSewa = bacaTeks("Kode transaksi: ");
+        String kodeKendaraan = bacaTeks("Kode kendaraan: ");
+        String idPenyewa = bacaTeks("ID penyewa: ");
+        int lamaHari;
+        do {
+            lamaHari = bacaInt("Lama sewa (hari): ");
+            if (lamaHari <= 0) {
+                System.out.println("Lama sewa harus lebih dari 0!");
+            }
+        } while (lamaHari <= 0);
+        rental.prosesSewa(
+                kodeSewa,
+                kodeKendaraan,
+                idPenyewa,
+                lamaHari
+        );
+    }
+    private static void cariKendaraan() {
+        System.out.println("\n=== CARI KENDARAAN ===");
+        String kode = bacaTeks("Masukkan kode kendaraan: ");
+        Kendaraan kendaraan = rental.cariKendaraan(kode);
+        if (kendaraan != null) {
+            System.out.println("Kendaraan ditemukan!");
+            kendaraan.tampilkanInfo();
+        } else {
+            System.out.println("Kendaraan tidak ditemukan!");
+        }
+    }
+}
