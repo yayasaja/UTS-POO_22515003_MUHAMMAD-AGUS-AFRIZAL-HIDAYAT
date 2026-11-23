@@ -1,0 +1,64 @@
+package rental.model;
+/**
+ * Class untuk menyimpan data penyewa kendaraan.
+ */
+public class Penyewa {
+    private String idPenyewa;
+    private String nama;
+    private String noTelepon;
+    private String alamat;
+    public Penyewa() {
+        this.idPenyewa = "";
+        this.nama = "";
+        this.noTelepon = "";
+        this.alamat = "";
+    }
+    public Penyewa(String idPenyewa, String nama,
+                   String noTelepon, String alamat) {
+        this.idPenyewa = idPenyewa;
+        setNama(nama);
+        setNoTelepon(noTelepon);
+        setAlamat(alamat);
+    }
+    public String getIdPenyewa() {
+        return idPenyewa;
+    }
+    public String getNama() {
+        return nama;
+    }
+    public void setNama(String nama) {
+        if (nama != null && !nama.trim().isEmpty()) {
+            this.nama = nama;
+        }
+    }
+    public String getNoTelepon() {
+        return noTelepon;
+    }
+    public void setNoTelepon(String noTelepon) {
+        if (noTelepon != null && !noTelepon.trim().isEmpty()) {
+            this.noTelepon = noTelepon;
+        }
+    }
+    public String getAlamat() {
+        return alamat;
+    }
+    public void setAlamat(String alamat) {
+        if (alamat != null && !alamat.trim().isEmpty()) {
+            this.alamat = alamat;
+        }
+    }
+    public boolean validasiData() {
+        return !nama.isEmpty()
+                && !noTelepon.isEmpty()
+                && !alamat.isEmpty();
+    }
+    public void ubahNomorTelepon(String nomorBaru) {
+        setNoTelepon(nomorBaru);
+    }
+    public void tampilkanInfo() {
+        System.out.println("ID Penyewa : " + idPenyewa);
+        System.out.println("Nama       : " + nama);
+        System.out.println("No Telepon : " + noTelepon);
+        System.out.println("Alamat     : " + alamat);
+    }
+}
