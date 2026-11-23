@@ -1,0 +1,177 @@
+package rental.model;
+import rental.adt.StackADT;
+import java.util.ArrayList;
+/**
+ * Class utama untuk mengelola sistem rental kendaraan.
+ */
+public class Rental {
+    private String namaRental;
+    private String alamatRental;
+    private ArrayList<Kendaraan> daftarKendaraan;
+    private ArrayList<Penyewa> daftarPenyewa;
+    private ArrayList<Sewa> daftarSewa;
+    private StackADT riwayat;
+
+    public Rental() {
+        this("Rental Kendaraan", "Kendari");
+    }
+    public Rental(String namaRental, String alamatRental) {
+        this.namaRental = namaRental;
+        this.alamatRental = alamatRental;
+        daftarKendaraan = new ArrayList<>();
+        daftarPenyewa = new ArrayList<>();
+        daftarSewa = new ArrayList<>();
+        riwayat = new StackADT();
+    }
+    public String getNamaRental() {
+        return namaRental;
+    }
+
+    public String getAlamatRental() {
+        return alamatRental;
+    }
+
+    public int getJumlahKendaraan() {
+        return daftarKendaraan.size();
+    }
+
+    public int getJumlahPenyewa() {
+        return daftarPenyewa.size();
+    }
+
+    public int getJumlahTransaksi() {
+        return daftarSewa.size();
+    }
+
+    public boolean tambahKendaraan(Kendaraan kendaraan) {
+        if (kendaraan == null || kendaraan.getKode().isEmpty()) {
+            return false;
+        }
+
+        if (cariKendaraan(kendaraan.getKode()) != null) {
+            System.out.println("Kode kendaraan sudah digunakan!");
+            return false;
+        }
+
+        daftarKendaraan.add(kendaraan);
+        return true;
+    }
+
+    public boolean tambahPenyewa(Penyewa penyewa) {
+        if (penyewa == null || !penyewa.validasiData()) {
+            return false;
+        }
+
+        if (cariPenyewa(penyewa.getIdPenyewa()) != null) {
+            System.out.println("ID penyewa sudah digunakan!");
+            return false;
+        }
+        daftarPenyewa.add(penyewa);
+        return true;
+    }
+    public Kendaraan cariKendaraan(String kode) {
+        for (Kendaraan k : daftarKendaraan) {
+            if (k.getKode().equalsIgnoreCase(kode)) {
+                return k;
+            }
+        }
+        return null;
+    }
+    public Penyewa cariPenyewa(String id) {
+        for (Penyewa p : daftarPenyewa) {
+            if (p.getIdPenyewa().equalsIgnoreCase(id)) {
+                return p;
+            }
+        }
+        return null;
+    }
+    public void tampilkanKendaraan() {
+        if (daftarKendaraan.isEmpty()) {
+            System.out.println("Belum ada kendaraan.");
+            return;
+        }
+        for (Kendaraan k : daftarKendaraan) {
+            System.out.println("----------------------------");
+            k.tampilkanInfo();
+        }
+    }
+    public void tampilkanPenyewa() {
+        if (daftarPenyewa.isEmpty()) {
+            System.out.println("Belum ada penyewa.");
+            return;
+        }
+        for (Penyewa p : daftarPenyewa) {
+            System.out.println("----------------------------");
+            p.tampilkanInfo();
+        }
+    }
+    public boolean prosesSewa(String kodeSewa, String kodeKendaraan,
+                              String idPenyewa, int lamaHari) {
+        Kendaraan kendaraan = cariKendaraan(kodeKendaraan);
+        Penyewa penyewa = cariPenyewa(idPenyewa);
+        if (kendaraan == null) {
+            System.out.println("Kendaraan tidak ditemukan!");
+            return false;
+        }
+        if (penyewa == null) {
+            System.out.println("Penyewa tidak ditemukan!");
+            return false;
+        }
+        if (!kendaraan.isTersedia()) {
+            System.out.println("Kendaraan sedang disewa!");
+            return false;
+        }
+        if (lamaHari <= 0) {
+            System.out.println("Lama sewa harus lebih dari 0!");
+            return false;
+        }
+        if (riwayat.isFull()) {
+            System.out.println("Riwayat transaksi penuh!");
+            return false;
+        }
+        for (Sewa s : daftarSewa) {
+            if (s.getKodeSewa().equalsIgnoreCase(kodeSewa)) {
+                System.out.println("Kode transaksi sudah digunakan!");
+                return false;
+            }
+        }
+        Sewa sewa = new Sewa(
+                kodeSewa, kendaraan, penyewa, lamaHari
+        );
+        sewa.hitungTotalBiaya();
+        sewa.mulaiSewa();
+        daftarSewa.add(sewa);
+        riwayat.push(sewa);
+        System.out.println("Penyewaan berhasil!");
+        System.out.println("Total biaya: Rp" + sewa.getTotalBiaya());
+        return true;
+    }
+    public void batalkanTransaksiTerakhir() {
+        Sewa sewa = riwayat.pop();
+        if (sewa == null) {
+            return;
+        }
+        sewa.batalkanSewa();
+        System.out.println("Transaksi " + sewa.getKodeSewa()
+                + " berhasil dibatalkan.");
+    }
+    public void tampilkanRiwayat() {
+        riwayat.tampilkan();
+    }
+    public void tampilkanLaporan() {
+        double totalPendapatan = 0;
+        for (Sewa s : daftarSewa) {
+            if (s.isAktif()) {
+                totalPendapatan += s.getTotalBiaya();
+            }
+        }
+        System.out.println("\n===== LAPORAN RENTAL =====");
+        System.out.println("Nama Rental       : " + namaRental);
+        System.out.println("Alamat            : " + alamatRental);
+        System.out.println("Jumlah Kendaraan  : " + daftarKendaraan.size());
+        System.out.println("Jumlah Penyewa    : " + daftarPenyewa.size());
+        System.out.println("Jumlah Transaksi  : " + daftarSewa.size());
+        System.out.println("Riwayat Aktif     : " + riwayat.size());
+        System.out.println("Total Pendapatan  : Rp" + totalPendapatan);
+    }
+}
